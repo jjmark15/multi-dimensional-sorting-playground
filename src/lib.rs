@@ -93,6 +93,20 @@ mod tests {
         data
     }
 
+    trait SecondPosition<T> {
+        fn second(&self) -> Option<&T>;
+    }
+
+    impl<T> SecondPosition<T> for [T] {
+        fn second(&self) -> Option<&T> {
+            if let [_first, second, ..] = self {
+                Some(second)
+            } else {
+                None
+            }
+        }
+    }
+
     #[test]
     fn prioritises_greater_height_then_apples_over_pears() {
         let under_test = FruitPrioritisationService::new();
@@ -104,7 +118,7 @@ mod tests {
         assert_that(first.species()).is_equal_to(Species::Apple);
         assert_that(first.height()).is_equal_to(2);
 
-        let second = prioritised.get(1).unwrap().clone();
+        let second = prioritised.second().unwrap().clone();
         assert_that(second.species()).is_equal_to(Species::Pear);
         assert_that(second.height()).is_equal_to(2);
     }
@@ -120,7 +134,7 @@ mod tests {
         assert_that(first.species()).is_equal_to(Species::Apple);
         assert_that(first.height()).is_equal_to(2);
 
-        let second = prioritised.get(1).unwrap().clone();
+        let second = prioritised.second().unwrap().clone();
         assert_that(second.species()).is_equal_to(Species::Pear);
         assert_that(second.height()).is_equal_to(2);
     }
