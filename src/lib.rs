@@ -94,7 +94,7 @@ mod tests {
     }
 
     #[test]
-    fn prioritises() {
+    fn prioritises_greater_height_then_apples_over_pears() {
         let under_test = FruitPrioritisationService::new();
         let fruit_input: Vec<Fruit> = input_data();
 
@@ -110,7 +110,7 @@ mod tests {
     }
 
     #[test]
-    fn prioritises_with_reversed_data() {
+    fn prioritises_greater_height_then_apples_over_pears_with_reversed_input() {
         let under_test = FruitPrioritisationService::new();
         let fruit_input: Vec<Fruit> = reversed_input_data();
 
