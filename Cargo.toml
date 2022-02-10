@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+derive-getters = "0.2"
+derive-new = "0.5"
+
+[dev-dependencies]
+speculoos = "0.8"
