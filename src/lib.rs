@@ -1,26 +1,23 @@
-use std::collections::VecDeque;
-
 struct PrioritisationBuilder {
-    functions: VecDeque<fn(Vec<Fruit>) -> Vec<Fruit>>,
+    functions: Vec<fn(Vec<Fruit>) -> Vec<Fruit>>,
 }
 
 impl PrioritisationBuilder {
     fn first(prioritisation: fn(Vec<Fruit>) -> Vec<Fruit>) -> Self {
-        let prioritisation_builder = PrioritisationBuilder {
-            functions: VecDeque::new(),
-        };
+        let prioritisation_builder = PrioritisationBuilder { functions: vec![] };
 
         prioritisation_builder.then(prioritisation)
     }
 
     fn then(mut self, prioritisation: fn(Vec<Fruit>) -> Vec<Fruit>) -> Self {
-        self.functions.push_front(prioritisation);
+        self.functions.push(prioritisation);
         self
     }
 
     fn execute(self, input: Vec<Fruit>) -> Vec<Fruit> {
         self.functions
             .into_iter()
+            .rev()
             .fold(input, |prioritised, func| func(prioritised))
     }
 }
