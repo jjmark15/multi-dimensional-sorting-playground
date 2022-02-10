@@ -101,12 +101,12 @@ mod tests {
         let prioritised = under_test.prioritise(fruit_input);
 
         let first = prioritised.first().unwrap().clone();
-        assert_that(&first.species()).is_equal_to(&Species::Apple);
-        assert_that(&first.height()).is_equal_to(&2);
+        assert_that(first.species()).is_equal_to(Species::Apple);
+        assert_that(first.height()).is_equal_to(2);
 
         let second = prioritised.get(1).unwrap().clone();
-        assert_that(&second.species()).is_equal_to(&Species::Pear);
-        assert_that(&second.height()).is_equal_to(&2);
+        assert_that(second.species()).is_equal_to(Species::Pear);
+        assert_that(second.height()).is_equal_to(2);
     }
 
     #[test]
@@ -117,11 +117,11 @@ mod tests {
         let prioritised = under_test.prioritise(fruit_input);
 
         let first = prioritised.first().unwrap().clone();
-        assert_that(&first.species()).is_equal_to(&Species::Apple);
-        assert_that(&first.height()).is_equal_to(&2);
+        assert_that(first.species()).is_equal_to(Species::Apple);
+        assert_that(first.height()).is_equal_to(2);
 
         let second = prioritised.get(1).unwrap().clone();
-        assert_that(&second.species()).is_equal_to(&Species::Pear);
-        assert_that(&second.height()).is_equal_to(&2);
+        assert_that(second.species()).is_equal_to(Species::Pear);
+        assert_that(second.height()).is_equal_to(2);
     }
 }
