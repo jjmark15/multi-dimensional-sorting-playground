@@ -1,3 +1,30 @@
+use std::collections::VecDeque;
+
+struct PrioritisationBuilder {
+    functions: VecDeque<fn(Vec<Fruit>) -> Vec<Fruit>>,
+}
+
+impl PrioritisationBuilder {
+    fn first(prioritisation: fn(Vec<Fruit>) -> Vec<Fruit>) -> Self {
+        let prioritisation_builder = PrioritisationBuilder {
+            functions: VecDeque::new(),
+        };
+
+        prioritisation_builder.then(prioritisation)
+    }
+
+    fn then(mut self, prioritisation: fn(Vec<Fruit>) -> Vec<Fruit>) -> Self {
+        self.functions.push_front(prioritisation);
+        self
+    }
+
+    fn execute(self, input: Vec<Fruit>) -> Vec<Fruit> {
+        self.functions
+            .into_iter()
+            .fold(input, |prioritised, func| func(prioritised))
+    }
+}
+
 #[derive(derive_new::new, derive_getters::Getters, Clone, Debug)]
 struct Fruit {
     species: Species,
@@ -14,11 +41,10 @@ enum Species {
 struct FruitPrioritisationService;
 
 impl FruitPrioritisationService {
-    fn prioritise(&self, fruit: Vec<Fruit>) -> Fruit {
-        let species_prioritised = prioritise_species(fruit);
-        let height_prioritised = prioritise_height(species_prioritised);
-
-        height_prioritised.first().unwrap().clone()
+    fn prioritise(&self, fruit: Vec<Fruit>) -> Vec<Fruit> {
+        PrioritisationBuilder::first(prioritise_height)
+            .then(prioritise_species)
+            .execute(fruit)
     }
 }
 
@@ -52,23 +78,50 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test() {
-        let under_test = FruitPrioritisationService::new();
-        let mut fruit_input: Vec<Fruit> = vec![
+    fn input_data() -> Vec<Fruit> {
+        vec![
             Fruit::new(Species::Apple, 1),
             Fruit::new(Species::Apple, 2),
             Fruit::new(Species::Pear, 1),
             Fruit::new(Species::Pear, 2),
-        ];
+        ]
+    }
 
-        let selected = under_test.prioritise(fruit_input.clone());
-        assert_that(&selected.species()).is_equal_to(&Species::Apple);
-        assert_that(&selected.height()).is_equal_to(&2);
+    fn reversed_input_data() -> Vec<Fruit> {
+        let mut data = input_data();
+        data.reverse();
+        data
+    }
 
-        fruit_input.reverse();
-        let selected_reverse = under_test.prioritise(fruit_input);
-        assert_that(&selected_reverse.species()).is_equal_to(&Species::Apple);
-        assert_that(&selected_reverse.height()).is_equal_to(&2);
+    #[test]
+    fn prioritises() {
+        let under_test = FruitPrioritisationService::new();
+        let fruit_input: Vec<Fruit> = input_data();
+
+        let prioritised = under_test.prioritise(fruit_input);
+
+        let first = prioritised.first().unwrap().clone();
+        assert_that(&first.species()).is_equal_to(&Species::Apple);
+        assert_that(&first.height()).is_equal_to(&2);
+
+        let second = prioritised.get(1).unwrap().clone();
+        assert_that(&second.species()).is_equal_to(&Species::Pear);
+        assert_that(&second.height()).is_equal_to(&2);
+    }
+
+    #[test]
+    fn prioritises_with_reversed_data() {
+        let under_test = FruitPrioritisationService::new();
+        let fruit_input: Vec<Fruit> = reversed_input_data();
+
+        let prioritised = under_test.prioritise(fruit_input);
+
+        let first = prioritised.first().unwrap().clone();
+        assert_that(&first.species()).is_equal_to(&Species::Apple);
+        assert_that(&first.height()).is_equal_to(&2);
+
+        let second = prioritised.get(1).unwrap().clone();
+        assert_that(&second.species()).is_equal_to(&Species::Pear);
+        assert_that(&second.height()).is_equal_to(&2);
     }
 }
